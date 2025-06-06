@@ -28,30 +28,41 @@ function ProjectTypeSelector({ projectEntries, setProjectEntries }) {
     <div className="mb-4">
       <h5 style={{ color: 'var(--primary-color)' }}>Project Types</h5>
       {projectEntries.map((entry, index) => (
-        <div className="row mb-3" key={index}>
-          <div className="col-md-6">
-            <select
-              className="form-select"
-              value={entry.type}
-              onChange={(e) => handleChange(index, 'type', e.target.value)}
-              required
-            >
-              <option value="">Select Project Type</option>
-              {PROJECT_TYPES.map((pt) => (
+        <div className="row mb-4" key={index}>
+            <div className="col-md-4">
+                <select
+                    className="form-select"
+                    value={entry.type}
+                    onChange={(e) => handleChange(index, 'type', e.target.value)}
+                    required
+                >
+                <option value="">Select Project Type</option>
+                {PROJECT_TYPES.map((pt) => (
                 <option key={pt.value} value={pt.value}>{pt.label}</option>
-              ))}
-            </select>
-          </div>
-          <div className="col-md-3">
-            <input
-              type="number"
-              min="1"
-              className="form-control"
-              value={entry.quantity}
-              onChange={(e) => handleChange(index, 'quantity', e.target.value)}
-              required
-            />
-          </div>
+                ))}
+      </select>
+    </div>
+
+    <div className="col-md-2">
+      <input
+        type="number"
+        min="1"
+        className="form-control"
+        value={entry.quantity}
+        onChange={(e) => handleChange(index, 'quantity', e.target.value)}
+        required
+      />
+    </div>
+
+    <div className="col-md-4">
+      <input
+        type="text"
+        placeholder="Project details or notes"
+        className="form-control"
+        value={entry.details || ''}
+        onChange={(e) => handleChange(index, 'details', e.target.value)}
+      />
+    </div>
           <div className="col-md-3">
             <button
               type="button"

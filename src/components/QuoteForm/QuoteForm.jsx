@@ -10,7 +10,7 @@ function QuoteForm() {
   });
 
   const [projectEntries, setProjectEntries] = useState([
-    { type: '', quantity: 1 }
+    { type: '', quantity: 1 , details: '' },
   ]);
 
   const handleChange = (e) => {
