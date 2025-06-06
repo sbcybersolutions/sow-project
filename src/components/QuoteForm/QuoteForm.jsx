@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './QuoteForm.css';
 import ProjectTypeSelector from './ProjectTypeSelector';
+import { getInternalCost } from '../../data/ProjectCosts';
 
 function QuoteForm() {
   const [formData, setFormData] = useState({
@@ -10,7 +11,7 @@ function QuoteForm() {
   });
 
   const [projectEntries, setProjectEntries] = useState([
-    { type: '', quantity: 1 , details: '' },
+    { type: '', quantity: 1, details: '' },
   ]);
 
   const handleChange = (e) => {
@@ -23,19 +24,36 @@ function QuoteForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const fullQuote = {
       ...formData,
-      projects: projectEntries,
+      projects: projectEntries.map((entry) => {
+        const internal = getInternalCost(entry.type);
+        const billing = internal * 1.5;
+        return {
+          ...entry,
+          internalCost: internal,
+          billingRate: billing,
+          total: billing * entry.quantity,
+        };
+      }),
     };
+
     console.log('Submitted Quote:', fullQuote);
-    // TODO: Pass to context / API
+    // TODO: Save or export
   };
+
+  const totalQuoteAmount = projectEntries.reduce((sum, entry) => {
+    const internal = getInternalCost(entry.type);
+    const billing = internal * 1.5;
+    return sum + billing * entry.quantity;
+  }, 0);
 
   return (
     <div className="container mt-4 quote-form">
       <h2 className="mb-4" style={{ color: 'var(--primary-color)' }}>Build a Quote</h2>
       <form onSubmit={handleSubmit}>
-        {/* Existing fields */}
+        {/* Client Name */}
         <div className="mb-3">
           <label htmlFor="clientName" className="form-label">Client Name</label>
           <input
@@ -49,6 +67,7 @@ function QuoteForm() {
           />
         </div>
 
+        {/* Project Name */}
         <div className="mb-3">
           <label htmlFor="projectName" className="form-label">Project Name</label>
           <input
@@ -62,6 +81,7 @@ function QuoteForm() {
           />
         </div>
 
+        {/* Quote Date */}
         <div className="mb-3">
           <label htmlFor="quoteDate" className="form-label">Quote Date</label>
           <input
@@ -75,18 +95,24 @@ function QuoteForm() {
           />
         </div>
 
-        {/* New project type selector */}
+        {/* Project Type Selector */}
         <ProjectTypeSelector
           projectEntries={projectEntries}
           setProjectEntries={setProjectEntries}
         />
 
-        <button type="submit" className="btn btn-primary">Next</button>
+        {/* Total Quote */}
+        <div className="mt-4 mb-3">
+          <h5>Total Quote:</h5>
+          <p>
+            <strong>${totalQuoteAmount.toFixed(2)}</strong>
+          </p>
+        </div>
+
+        <button type="submit" className="btn btn-primary">Submit Quote</button>
       </form>
     </div>
   );
 }
 
 export default QuoteForm;
-// This component is the main form for building a quote in the SOW Cost Calculator application.
-// It includes fields for client name, project name, quote date, and a dynamic project type selector.
