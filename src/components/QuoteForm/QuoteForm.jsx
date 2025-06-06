@@ -23,25 +23,28 @@ function QuoteForm() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const fullQuote = {
-      ...formData,
-      projects: projectEntries.map((entry) => {
-        const internal = getInternalCost(entry.type);
-        const billing = internal * 1.5;
-        return {
-          ...entry,
-          internalCost: internal,
-          billingRate: billing,
-          total: billing * entry.quantity,
-        };
-      }),
-    };
-
-    console.log('Submitted Quote:', fullQuote);
-    // TODO: Save or export
+  const fullQuote = {
+    ...formData,
+    projects: projectEntries.map((entry) => {
+      const internal = getInternalCost(entry.type);
+      const billing = internal * 1.5;
+      return {
+        ...entry,
+        internalCost: internal,
+        billingRate: billing,
+        total: billing * entry.quantity,
+      };
+    }),
   };
+
+  const existing = JSON.parse(localStorage.getItem('sow_quotes') || '[]');
+  localStorage.setItem('sow_quotes', JSON.stringify([...existing, fullQuote]));
+
+  console.log('Quote saved:', fullQuote);
+};
+
 
   const totalQuoteAmount = projectEntries.reduce((sum, entry) => {
     const internal = getInternalCost(entry.type);
