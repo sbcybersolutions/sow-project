@@ -6,6 +6,7 @@ const PROJECT_TYPES = [
   { label: 'Course', value: 'course' },
   { label: 'Video', value: 'video' },
   { label: 'Webinar', value: 'webinar' },
+  { label: 'Translation', value: 'translation' },
 ];
 
 
