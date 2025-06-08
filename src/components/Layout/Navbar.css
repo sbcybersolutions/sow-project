@@ -1,0 +1,11 @@
+.logo {
+  height: 32px;
+  width: auto;
+}
+.navbar {
+  border-bottom: 1px solid #ddd;
+}
+.nav-link.active {
+  font-weight: bold;
+  color: var(--primary-color) !important;
+}
