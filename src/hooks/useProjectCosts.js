@@ -15,10 +15,14 @@ function calculateInternalCost(projectType) {
 export default function useProjectCosts() {
   const data = useMemo(() => getStoredTypes(), []);
 
-  const projectTypes = Object.keys(data).map((key) => ({
-    label: key.charAt(0).toUpperCase() + key.slice(1),
-    value: key
-  }));
+  const projectTypes = useMemo(() => {
+    return Object.keys(data)
+      .map((key) => ({
+        label: key.charAt(0).toUpperCase() + key.slice(1),
+        value: key
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }));
+  }, [data]);
 
   const getInternalCost = (projectType) => calculateInternalCost(projectType);
 
