@@ -1,145 +1,128 @@
 import React, { useState, useEffect } from 'react';
-import {
-  getProjectTypes,
-  addOrUpdateProjectType,
-  deleteProjectType
-} from '../../utils/projectCostStorage';
 
-function AdminPanel() {
-  const [projectTypes, setProjectTypes] = useState({});
-  const [currentName, setCurrentName] = useState('');
-  const [breakdown, setBreakdown] = useState([]);
-  const [editing, setEditing] = useState(false);
+const STORAGE_KEY = 'sow_project_types';
+
+export default function AdminPanel() {
+  const [types, setTypes] = useState({});
+  const [newType, setNewType] = useState('');
+  const [resources, setResources] = useState([]);
 
   useEffect(() => {
-    setProjectTypes(getProjectTypes());
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    setTypes(stored);
   }, []);
 
-  const handleAddRow = () => {
-    setBreakdown([...breakdown, { role: '', hours: 1, rate: 0 }]);
+  const saveTypes = (updated) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setTypes(updated);
   };
 
-  const handleChange = (index, field, value) => {
-    const updated = [...breakdown];
-    updated[index][field] = field === 'role' ? value : parseFloat(value);
-    setBreakdown(updated);
+  const handleAddType = () => {
+    if (!newType.trim()) return;
+    const updated = { ...types, [newType.toLowerCase()]: [] };
+    saveTypes(updated);
+    setNewType('');
   };
 
-  const handleSave = () => {
-    addOrUpdateProjectType(currentName, breakdown);
-    setProjectTypes(getProjectTypes());
-    resetForm();
+  const handleAddResource = (typeKey) => {
+    const updated = {
+      ...types,
+      [typeKey]: [...(types[typeKey] || []), { role: '', hours: 0, rate: 0 }]
+    };
+    saveTypes(updated);
   };
 
-  const handleEdit = (name) => {
-    setCurrentName(name);
-    setBreakdown(projectTypes[name]);
-    setEditing(true);
+  const handleResourceChange = (typeKey, index, field, value) => {
+    const updated = { ...types };
+    const parsedValue =
+      field === 'hours' || field === 'rate' ? parseFloat(value) || 0 : value;
+    updated[typeKey][index][field] = parsedValue;
+    saveTypes(updated);
   };
 
-  const handleDelete = (name) => {
-    if (window.confirm(`Delete project type "${name}"?`)) {
-      deleteProjectType(name);
-      setProjectTypes(getProjectTypes());
-    }
-  };
-
-  const resetForm = () => {
-    setCurrentName('');
-    setBreakdown([]);
-    setEditing(false);
+  const handleDeleteType = (typeKey) => {
+    const updated = { ...types };
+    delete updated[typeKey];
+    saveTypes(updated);
   };
 
   return (
     <div className="container mt-4">
-      <h2 style={{ color: 'var(--primary-color)' }}>Admin: Manage Project Types</h2>
+      <h2>Admin Panel</h2>
 
-      <div className="card my-4 p-3">
-        <h5>{editing ? 'Edit Project Type' : 'Add New Project Type'}</h5>
-
-        <div className="mb-3">
-          <label className="form-label">Project Type Name</label>
-          <input
-            type="text"
-            className="form-control"
-            value={currentName}
-            onChange={(e) => setCurrentName(e.target.value)}
-            disabled={editing} // prevent renaming
-          />
-        </div>
-
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Role</th>
-              <th>Hours</th>
-              <th>Rate</th>
-            </tr>
-          </thead>
-          <tbody>
-            {breakdown.map((item, i) => (
-              <tr key={i}>
-                <td>
-                  <input
-                    className="form-control"
-                    value={item.role}
-                    onChange={(e) => handleChange(i, 'role', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={item.hours}
-                    onChange={(e) => handleChange(i, 'hours', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={item.rate}
-                    onChange={(e) => handleChange(i, 'rate', e.target.value)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="mb-3">
-          <button className="btn btn-outline-secondary me-2" type="button" onClick={handleAddRow}>
-            + Add Role
-          </button>
-          <button className="btn btn-primary me-2" type="button" onClick={handleSave} disabled={!currentName}>
-            {editing ? 'Update' : 'Save'}
-          </button>
-          {editing && (
-            <button className="btn btn-secondary" type="button" onClick={resetForm}>
-              Cancel
-            </button>
-          )}
-        </div>
+      <div className="mb-3">
+        <input
+          className="form-control"
+          placeholder="New project type"
+          value={newType}
+          onChange={(e) => setNewType(e.target.value)}
+        />
+        <button className="btn btn-primary mt-2" onClick={handleAddType}>
+          Add Project Type
+        </button>
       </div>
 
-      <h5>Existing Project Types</h5>
-      <ul className="list-group">
-        {Object.entries(projectTypes).map(([name, roles]) => (
-          <li className="list-group-item d-flex justify-content-between align-items-center" key={name}>
-            <span>{name}</span>
-            <div>
-              <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleEdit(name)}>
-                Edit
-              </button>
-              <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(name)}>
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {Object.keys(types).map((typeKey) => (
+        <div key={typeKey} className="card mb-4">
+          <div className="card-header d-flex justify-content-between align-items-center">
+            <strong>{typeKey.charAt(0).toUpperCase() + typeKey.slice(1)}</strong>
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={() => handleDeleteType(typeKey)}
+            >
+              Delete
+            </button>
+          </div>
+          <div className="card-body">
+            {types[typeKey].map((resource, idx) => (
+              <div key={idx} className="row mb-2">
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Role"
+                    value={resource.role}
+                    onChange={(e) =>
+                      handleResourceChange(typeKey, idx, 'role', e.target.value)
+                    }
+                  />
+                </div>
+                <div className="col-md-3">
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Hours"
+                    step="0.01"
+                    value={resource.hours}
+                    onChange={(e) =>
+                      handleResourceChange(typeKey, idx, 'hours', e.target.value)
+                    }
+                  />
+                </div>
+                <div className="col-md-3">
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Rate"
+                    step="0.01"
+                    value={resource.rate}
+                    onChange={(e) =>
+                      handleResourceChange(typeKey, idx, 'rate', e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+            <button
+              className="btn btn-secondary mt-2"
+              onClick={() => handleAddResource(typeKey)}
+            >
+              Add Resource
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
-
-export default AdminPanel;
+// This component allows admins to manage project types and their associated resources.
