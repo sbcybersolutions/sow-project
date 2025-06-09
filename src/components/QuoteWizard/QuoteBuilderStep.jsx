@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import ProjectTypeSelector from '../QuoteForm/ProjectTypeSelector';
 import { getInternalCost } from '../../data/ProjectCosts';
+import { exportQuoteToExcel } from '../../utils/exportToExcel';
 
 function QuoteBuilderStep({ formData, onBack }) {
   const [projectEntries, setProjectEntries] = useState([
     { type: '', quantity: 1, details: '' },
   ]);
+
+  const [savedQuote, setSavedQuote] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,7 +30,7 @@ function QuoteBuilderStep({ formData, onBack }) {
     const existing = JSON.parse(localStorage.getItem('sow_quotes') || '[]');
     localStorage.setItem('sow_quotes', JSON.stringify([...existing, fullQuote]));
 
-    console.log('Quote saved:', fullQuote);
+    setSavedQuote(fullQuote);
     alert('Quote saved successfully!');
   };
 
@@ -58,18 +61,36 @@ function QuoteBuilderStep({ formData, onBack }) {
       </div>
 
       {/* Actions */}
-      <div className="d-flex justify-content-between">
-        <button type="button" className="btn btn-outline-secondary" onClick={onBack}>
+      <div className="d-flex flex-wrap gap-2">
+        <button
+          type="button"
+          className="btn btn-outline-secondary"
+          onClick={onBack}
+        >
           Back
         </button>
-        <button type="submit" className="btn btn-primary">
+
+        <button
+          type="submit"
+          className="btn btn-primary"
+        >
           Save Quote
         </button>
+
+        {savedQuote && (
+          <button
+            type="button"
+            className="btn btn-outline-success"
+            onClick={() => exportQuoteToExcel(savedQuote)}
+          >
+            Export to Excel
+          </button>
+        )}
       </div>
     </form>
   );
 }
 
 export default QuoteBuilderStep;
-// This component allows users to build a quote by selecting project types, quantities, and details.
-// It calculates the total quote amount based on internal costs and billing rates.
+// This component allows users to build a quote by selecting project types, entering quantities, and viewing the total cost.
+// It calculates internal costs based on predefined rates, allows saving the quote to local storage, and provides an option to export the quote to Excel.
