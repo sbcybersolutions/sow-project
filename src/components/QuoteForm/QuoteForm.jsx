@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './QuoteForm.css';
 import ProjectTypeSelector from './ProjectTypeSelector';
-import { getInternalCost } from '../../data/ProjectCosts';
+
 
 function QuoteForm() {
   const [formData, setFormData] = useState({
