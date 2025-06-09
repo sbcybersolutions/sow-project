@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ProjectTypeSelector from '../QuoteForm/ProjectTypeSelector';
-import { getInternalCost } from '../../data/ProjectCosts';
+import useProjectCosts from '../../hooks/useProjectCosts';
 import { exportQuoteToExcel } from '../../utils/exportToExcel';
 
 function QuoteBuilderStep({ formData, onBack }) {
@@ -9,6 +9,7 @@ function QuoteBuilderStep({ formData, onBack }) {
   ]);
 
   const [savedQuote, setSavedQuote] = useState(null);
+  const { getInternalCost, getBreakdown } = useProjectCosts();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,6 +24,7 @@ function QuoteBuilderStep({ formData, onBack }) {
           internalCost: internal,
           billingRate: billing,
           total: billing * entry.quantity,
+          breakdown: getBreakdown(entry.type)
         };
       }),
     };
@@ -92,5 +94,4 @@ function QuoteBuilderStep({ formData, onBack }) {
 }
 
 export default QuoteBuilderStep;
-// This component allows users to build a quote by selecting project types, entering quantities, and viewing the total cost.
-// It calculates internal costs based on predefined rates, allows saving the quote to local storage, and provides an option to export the quote to Excel.
+// This component handles the quote building step in the SOW calculator.

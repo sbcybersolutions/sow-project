@@ -1,6 +1,5 @@
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { PROJECT_COST_BREAKDOWN } from '../data/ProjectCosts';
 
 export function exportQuoteToExcel(quote) {
   const { clientName, projectName, quoteDate, projects } = quote;
@@ -22,12 +21,11 @@ export function exportQuoteToExcel(quote) {
       project.details || ''
     ]);
 
-    const breakdown = PROJECT_COST_BREAKDOWN[project.type];
-    if (breakdown && breakdown.length) {
+    if (project.breakdown && project.breakdown.length > 0) {
       sheetData.push(['', '', '', '', '']);
       sheetData.push(['  Role', 'Hours', 'Rate', 'Subtotal']);
 
-      breakdown.forEach((item) => {
+      project.breakdown.forEach((item) => {
         sheetData.push([
           `  ${item.role}`,
           item.hours,
@@ -36,7 +34,7 @@ export function exportQuoteToExcel(quote) {
         ]);
       });
 
-      const totalInternal = breakdown.reduce(
+      const totalInternal = project.breakdown.reduce(
         (sum, item) => sum + item.hours * item.rate,
         0
       );
@@ -56,6 +54,10 @@ export function exportQuoteToExcel(quote) {
 
   const fileName = `${clientName.replace(/\s+/g, '_')}_${projectName.replace(/\s+/g, '_')}_Quote.xlsx`;
 
-  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  const wbout = XLSX.write(wb, {
+    bookType: 'xlsx',
+    type: 'array'
+  });
+
   saveAs(new Blob([wbout], { type: 'application/octet-stream' }), fileName);
 }
