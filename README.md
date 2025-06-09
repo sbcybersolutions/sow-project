@@ -51,7 +51,7 @@ client/
 npm install</code>
 
 ### 2. Run the app
-npm run dev
+<code> npm run dev</code>
 
 ## 🔐 Admin Panel
 Visit /admin to:
@@ -87,14 +87,4 @@ Internal cost breakdown per project
 📊 Dashboard with quote analytics
 
 
-## 📤 Export
-From the quote builder, export the current quote to Excel
-
-Includes:
-
-Client/project info
-
-Billing totals
-
-Internal cost breakdown per project
 
