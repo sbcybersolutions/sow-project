@@ -39,6 +39,14 @@ function Navbar() {
               Saved Quotes
             </Link>
           </li>
+                    <li className="nav-item">
+            <Link
+              className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`}
+              to="/admin"
+            >
+              Admin Panel
+            </Link>
+          </li>
         </ul>
       </div>
     </nav>
