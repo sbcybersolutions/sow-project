@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './QuotesList.css';
 
 function QuotesList() {
@@ -19,6 +20,7 @@ function QuotesList() {
     <div className="container mt-5">
       <h2 style={{ color: 'var(--primary-color)' }}>Saved Quotes</h2>
 
+      {/* Client search input */}
       <div className="mb-4">
         <label htmlFor="clientFilter" className="form-label">Search by Client</label>
         <input
@@ -42,11 +44,15 @@ function QuotesList() {
                   <h5 className="card-title">{quote.projectName}</h5>
                   <h6 className="card-subtitle mb-2 text-muted">{quote.clientName}</h6>
                   <p className="card-text">
-                    Date: {quote.quoteDate}<br />
-                    Projects: {quote.projects.length}<br />
-                    Total: $
+                    <strong>Date:</strong> {quote.quoteDate}<br />
+                    <strong>Projects:</strong> {quote.projects.length}<br />
+                    <strong>Total:</strong> $
                     {quote.projects.reduce((sum, p) => sum + (p.billingRate * p.quantity), 0).toFixed(2)}
                   </p>
+
+                  <Link to={`/quotes/${idx}`} className="btn btn-sm btn-outline-primary mt-2">
+                    View Details
+                  </Link>
                 </div>
               </div>
             </div>

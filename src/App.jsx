@@ -5,6 +5,7 @@ import QuotesList from './components/QuotesList/QuotesList'; // ✅ plural "Quot
 import QuoteWizard from './components/QuoteWizard/QuoteWizard';
 import Navbar from './components/Layout/Navbar';
 import AdminPanel from './components/Admin/AdminPanel';
+import QuoteDetail from './components/QuotesList/QuoteDetail';
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/build" element={<QuoteWizard />} />
           <Route path="/quotes" element={<QuotesList />} />
           <Route path="/admin" element={<AdminPanel />} /> 
+          <Route path="/quotes/:id" element={<QuoteDetail />} />
         </Routes>
       </div>
     </>
