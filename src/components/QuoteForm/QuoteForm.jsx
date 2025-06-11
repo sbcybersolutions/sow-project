@@ -29,7 +29,7 @@ function QuoteForm() {
     ...formData,
     projects: projectEntries.map((entry) => {
       const internal = getInternalCost(entry.type);
-      const billing = internal * 1.5;
+      const billing = internal * 2; // Assuming billing rate is double the internal cost
       return {
         ...entry,
         internalCost: internal,
@@ -48,7 +48,7 @@ function QuoteForm() {
 
   const totalQuoteAmount = projectEntries.reduce((sum, entry) => {
     const internal = getInternalCost(entry.type);
-    const billing = internal * 1.5;
+    const billing = internal * 2;
     return sum + billing * entry.quantity;
   }, 0);
 

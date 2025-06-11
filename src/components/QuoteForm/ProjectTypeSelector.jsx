@@ -25,7 +25,7 @@ function ProjectTypeSelector({ projectEntries, setProjectEntries }) {
       <h5 style={{ color: 'var(--primary-color)' }}>Project Types</h5>
       {projectEntries.map((entry, index) => {
         const internalCost = getInternalCost(entry.type);
-        const billingRate = internalCost * 1.5;
+        const billingRate = internalCost * 2; // Assuming billing rate is double the internal cost
         const totalBilling = billingRate * entry.quantity;
 
         return (

@@ -18,7 +18,7 @@ function QuoteBuilderStep({ formData, onBack }) {
       ...formData,
       projects: projectEntries.map((entry) => {
         const internal = getInternalCost(entry.type);
-        const billing = internal * 1.5;
+        const billing = internal * 2;
         return {
           ...entry,
           internalCost: internal,
@@ -38,7 +38,7 @@ function QuoteBuilderStep({ formData, onBack }) {
 
   const totalQuoteAmount = projectEntries.reduce((sum, entry) => {
     const cost = getInternalCost(entry.type);
-    return sum + (cost * 1.5 * entry.quantity);
+    return sum + (cost * 2 * entry.quantity);
   }, 0);
 
   return (
